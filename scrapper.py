@@ -1,16 +1,69 @@
-# This is a sample Python script.
+import os
+import csv
+from datetime import datetime
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from xecd_rates_client import XecdClient
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+currencies = ['KES', 'UGX', 'NGN', 'GHS', 'MAD', 'XOF', 'EGP']
 
 
-# Press the green button in the gutter to run the script.
+def get_currency_conversion(currency_to_list, currency_from=None):
+    account_id = 'autochekafrica363498181'
+    api_key = 'kvlqf05toguakjc599re93dmlt'
+
+    client = XecdClient(account_id, api_key)
+    response = client.convert_from(to_currency=', '.join(currency_to_list))
+    currency_data = response.get('to')
+
+    datetime_format = '%Y-%m-%d %H:%M:%S'
+
+    # Converting the timestamp from xe exchange response
+    formatted_datetime = datetime.strptime(response.get('timestamp'), '%Y-%m-%dT%H:%M:%SZ').strftime(datetime_format)
+
+    data = []
+    for currency in currency_data:
+        currency_to = currency.get('quotecurrency', '')
+
+        # Getting the conversion of currency to usd from Xe instead of calculating manually which might be inaccurate
+        currency_to_usd_data = client.convert_from(from_currency=currency_to, to_currency='USD')
+
+        data_dict = {
+            'timestamp': datetime.now().strftime(datetime_format),
+            'currency_from': response.get('from', ''),
+            'USD_to_currency_rate': currency.get('mid', ''),
+            'currency_to_USD_rate': currency_to_usd_data.get('to')[0]['mid'],
+            'currency_to': currency_to
+        }
+        data.append(data_dict)
+
+    print('Done Reading Currency Exchange Data')
+
+    # Creating a directory to save the currency exchange data file
+    path_directory = os.path.expanduser('~') + '/reports/exchange/'
+    os.makedirs(name=path_directory, exist_ok=True)
+
+    file_name = path_directory + 'currency_conversion_data.csv'
+
+    # Creating the file itself. If the file exists, continue with executing code
+    try:
+        open(file_name, 'x')
+    except FileExistsError:
+        pass
+
+    # Writing to the file with mode as append i.e. If the file already exists, add the incoming data at the end of the
+    # file.
+    # I am using the DictWriter class since I saved the data as an array of dictionaries
+    with open(file=file_name, mode='a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=data[0].keys())
+
+        # If the file is empty(with no headers), create them using the writeheader method
+        if os.path.getsize(file_name) == 0:
+            writer.writeheader()
+
+        # Write the data according to the list created earlier
+        writer.writerows(data)
+    print(f'The data has been saved successfully as "currency_conversion_data.csv" at "{path_directory}"')
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    get_currency_conversion(currency_to_list=currencies)
