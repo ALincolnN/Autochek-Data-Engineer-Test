@@ -25,10 +25,10 @@ dag1 = DAG(
     schedule_interval='0 1,23 * * *',
     catchup=False
 )
-# run_task = BashOperator(
-#     task_id='Task1',
-#     dag=dag1,
-#     bash_command=f'python {runner_path} get_currency_conversion'
-# )
+run_task = BashOperator(
+    task_id='Task1',
+    dag=dag1,
+    bash_command=f'python {runner_path}'
+)
 
 
