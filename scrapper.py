@@ -64,8 +64,12 @@ for currency in response_data.get('to'):
 print('Done Reading Currency Exchange Data')
 
 # Creating a directory to save the currency exchange data file
-path_directory = os.getcwd() + '/reports/exchange/'
-os.makedirs(name=path_directory, exist_ok=True)
+path_directory = '/opt/airflow/reports/'
+if os.path.exists(path_directory):
+    pass
+else:
+    path_directory = os.getcwd() + '/reports/exchange/'
+    os.makedirs(name=path_directory, exist_ok=True)
 
 file_name = path_directory + 'currency_conversion_data.csv'
 
