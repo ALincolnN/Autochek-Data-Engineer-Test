@@ -1,3 +1,7 @@
 /venv/
 .idea/
 .idea/*
+/logs/
+/plugins/
+.env
+/reports/

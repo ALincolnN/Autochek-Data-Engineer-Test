@@ -1,1 +1,4 @@
 xecd-rates-client==1.0.0
+apache-airflow==2.6.0
+psycopg2-binary==2.9.9
+requests==2.31.0
