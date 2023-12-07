@@ -1,7 +1,9 @@
 
 -- The operations below have been done on PostgreSQL Version 14.7 on the PgAdmin4 Version 8.0 desktop application interface
 
--- Creating tables for testing purposes
+-- ========================
+-- SECTION: 1
+-- ========================
 CREATE TABLE borrower_table
 	(borrower_id VARCHAR PRIMARY KEY, state VARCHAR, city VARCHAR, zip_code VARCHAR, borrower_credit_score VARCHAR);
 	
@@ -20,8 +22,10 @@ CREATE TABLE loan_repayment
 	 FOREIGN KEY(loan_id) REFERENCES loan_table(loan_id));
 	 
 	 
--- First Table: 
-SELECT t1.borrower_id, t2.loan_id, t2.loan_amount, t2.date_of_release, t2.maturity_date, t2.interest_rate, t2.term, t2.payment_frequency, t2.down_payment,
+-- ========================
+-- SECTION: 2
+-- ======================== 
+SELECT t1.borrower_id, t2.loan_id, t2.loan_amount, t2.date_of_release, t2.maturity_date, t2.interest_rate, t2.term, LEAD(t4.date_paid) OVER(PARTITION BY t4.loan_id ORDER BY t4.date_paid) - t4.date_paid as payment_frequency, t2.down_payment,
 	t3.expected_payment_amount, t3.expected_payment_date, t4.amount_paid, t4.date_paid
 FROM borrower_table AS t1
 INNER JOIN loan_table AS t2 ON t1.borrower_id = t2.borrower_id
@@ -29,7 +33,10 @@ LEFT JOIN payment_schedule AS t3 ON t2.loan_id = t3.loan_id
 LEFT JOIN loan_repayment AS t4 ON t3.loan_id = t4.loan_id
 ORDER BY borrower_id, loan_id, loan_amount DESC
 
--- Missed Payments Table:
+-- ========================
+-- SECTION: 3
+-- ========================
+-- Missed payments
 WITH expected_payments AS (
 	SELECT loan_id, COUNT(*)
 	FROM payment_schedule
@@ -47,7 +54,9 @@ INNER JOIN expected_payments AS t3 ON t2.loan_id = t3.loan_id
 LEFT JOIN payments_made AS t4 ON t2.loan_id = t4.loan_id
 ORDER BY t1.borrower_id, t2.loan_id
 
--- Problem 1(Main):
+-- ========================
+-- SECTION: 4
+-- ========================
 -- Selecting only the most recent record of loan_repayment data
 WITH repayment_data AS (
 	SELECT loan_id, amount_paid, date_paid
