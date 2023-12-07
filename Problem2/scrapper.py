@@ -68,7 +68,7 @@ path_directory = '/opt/airflow/reports/'
 if os.path.exists(path_directory):
     pass
 else:
-    path_directory = os.getcwd() + '/reports/exchange/'
+    path_directory = os.getcwd() + '/reports/'
     os.makedirs(name=path_directory, exist_ok=True)
 
 file_name = path_directory + 'currency_conversion_data.csv'

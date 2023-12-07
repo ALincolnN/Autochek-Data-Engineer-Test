@@ -26,7 +26,7 @@ dag1 = DAG(
     catchup=False
 )
 run_task = BashOperator(
-    task_id='Task1',
+    task_id='get_currency_exchange_task',
     dag=dag1,
     bash_command=f'python {runner_path}'
 )

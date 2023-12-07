@@ -1,7 +1,7 @@
-/venv/
+venv/
 .idea/
 .idea/*
-/logs/
-/plugins/
-.env
-/reports/
+/Problem2/logs/
+/Problem2/plugins/
+Problem2/.env
+/Problem2/reports/
