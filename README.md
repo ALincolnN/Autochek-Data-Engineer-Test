@@ -7,7 +7,7 @@ for scripting and Apache Airflow for orchestration and scheduling.
 
 Clone the project from GitHub and the file structure for the project will be:
 
-         ├── Autochek-Data-Engineering-Interview            
+         ├── Autochek-Data-Engineer-Test            
             ├── Problem1
             │      ├── autochek.sql
             │      ├── borrower_table.csv
